@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import sys
 
 
 def read_jsonl(path: str) -> list[dict]:
@@ -8,7 +9,7 @@ def read_jsonl(path: str) -> list[dict]:
 
 
 keywords = json.loads(Path("eval/keywords.json").read_text(encoding="utf-8"))
-rows = read_jsonl("eval/results/generation_answers.jsonl")
+rows = read_jsonl(sys.argv[1] if len(sys.argv) > 1 else "eval/results/generation_answers.jsonl")
 
 ok = total = 0
 for r in rows:

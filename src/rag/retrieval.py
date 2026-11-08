@@ -45,3 +45,12 @@ def retrieve(question: str, embedder, client, k: int | None = None, use_filter: 
     if not points and flt is not None:  # filtre trop strict : recherche complète
         points = client.query_points("releases", query=vector, limit=K).points
     return [p.payload for p in points]
+
+def retrieve_release(question: str, repo: str, tag: str, embedder, client, k: int = 6) -> list[dict]:
+    vector = list(embedder.embed([f"query: {question}"]))[0].tolist()
+    flt = models.Filter(must=[
+        models.FieldCondition(key="repo", match=models.MatchValue(value=repo)),
+        models.FieldCondition(key="tag", match=models.MatchValue(value=tag)),
+    ])
+    points = client.query_points("releases", query=vector, query_filter=flt, limit=k).points
+    return [p.payload for p in points]

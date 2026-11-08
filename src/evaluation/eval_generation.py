@@ -1,11 +1,17 @@
 import json
 import re
 from pathlib import Path
+import sys
 
 from fastembed import TextEmbedding
 from qdrant_client import QdrantClient
 
 from src.rag.answer import EMBED_MODEL, generate, retrieve
+
+from src.agent.agent import agent_answer
+
+use_agent = "--agent" in sys.argv
+out_name = "generation_answers_agent.jsonl" if use_agent else "generation_answers.jsonl"
 
 lines = Path("eval/questions.jsonl").read_text(encoding="utf-8").splitlines()
 questions = [json.loads(l) for l in lines if l.strip()]
@@ -16,8 +22,11 @@ client = QdrantClient(path="data/qdrant_db")
 
 rows = []
 for q in questions:
-    chunks = retrieve(q["question"], embedder, client)
-    answer = generate(q["question"], chunks)
+    if use_agent:
+        answer, chunks, tool = agent_answer(q["question"], embedder, client)
+    else:
+        chunks = retrieve(q["question"], embedder, client)
+        answer, tool = generate(q["question"], chunks), "-"
     low = answer.lower()
     refused = "je ne sais pas" in low
 
@@ -33,14 +42,15 @@ for q in questions:
 
     rows.append({"id": q["id"], "type": q["type"], "content_ok": content_ok,
                  "cite_ok": cite_ok, "answer": answer,
-                 "cited_urls": sorted(cited_urls) if q["type"] != "sans_reponse" else []})
+                 "cited_urls": sorted(cited_urls) if q["type"] != "sans_reponse" else [],
+                 "tool": tool})
     cite = "-" if cite_ok is None else ("OK" if cite_ok else "KO")
-    print(f"{q['id']} | contenu {'OK' if content_ok else 'KO'} | citation {cite} | {q['question'][:50]}")
+    print(f"{q['id']} | contenu {'OK' if content_ok else 'KO'} | citation {cite} | {tool} | {q['question'][:50]}")
 
 client.close()
 
 Path("eval/results").mkdir(parents=True, exist_ok=True)
-with open("eval/results/generation_answers.jsonl", "w", encoding="utf-8") as f:
+with open(f"eval/results/{out_name}", "w", encoding="utf-8") as f:
     for r in rows:
         f.write(json.dumps(r, ensure_ascii=False) + "\n")
 

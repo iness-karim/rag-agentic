@@ -71,3 +71,36 @@ Limites : K = 8 choisi après analyse d'un échec du jeu d'évaluation ; la plup
 citent une version, ce qui avantage le filtre ; une seule exécution.
 q011 (question multi-releases) : contenu correct, mais citation incomplète (le fait de la v1.19.0 n'est pas
 sourcé). Critère de citation étendu aux deux releases attendues.
+## Génération : comparaison des configurations (qwen2.5:7b via Ollama, température 0, une exécution)
+
+| Configuration | Questions | Contenu | Citation |
+|---|---|---|---|
+| RAG sans filtre, K = 5 | 14 | 10/14 | 10/14 |
+| Filtre repo/tag, K = 5 | 14 | 11/14 | 12/14 |
+| Filtre repo/tag, K adaptatif (8 avec filtre) | 14 | 12/14 | 12/14 |
+| Agent (outil latest_release, première version) | 14 | 12/14 | 12/14 |
+| Agent + règle « version nommée » + contenu de la release | 14 | 13/14 | 13/14 |
+| Même configuration, avec 3 questions « dernière version » (q017 à q019) | 17 | 15/17 (16/17 avec q017 assouplie) | 15/17 |
+
+Refus corrects (questions sans réponse dans le corpus) : 2/2 dans toutes les configurations.
+
+## Ce que chaque changement a corrigé ou cassé
+
+| Changement | Effet |
+|---|---|
+| Filtre repo/tag | q014 corrigée |
+| K = 8 avec filtre | q015 corrigée (chunk Deprecations au 6e rang sur 7) ; citation de q011 dégradée |
+| Agent avec latest_release | q005 corrigée ; q015 cassée (outil appelé à tort) |
+| Règle « version nommée » | q015 re-corrigée |
+| latest_release + contenu de la release | q017 passe d'un refus à une réponse fidèle |
+
+## Limites connues
+
+- Échecs restants : q009 (réponse incomplète du modèle alors que l'information est dans les chunks),
+  q011 (citation : seul un des deux faits est sourcé), q018 (le modèle oublie parfois de citer).
+- Les réglages (K = 8, règle « version nommée », outil enrichi, mots-clés de q002, q013, q017) ont été
+  décidés après avoir vu des échecs sur ce même jeu d'évaluation : les gains ne sont pas un test indépendant.
+- q017 à q019 ont été écrites après avoir observé l'échec de l'outil, et leurs réponses dépendent de
+  l'état du corpus au 8 novembre 2026.
+- Une seule exécution par configuration, 14 à 17 questions : un point d'écart tient à une seule question.
+- L'évaluation par mots-clés est approximative.

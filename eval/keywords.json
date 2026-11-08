@@ -12,6 +12,9 @@
   "q012": [["cold"], ["cached"], ["pinned"]],
   "q013": [["prefix"], ["mot-clé", "mots-clés", "keyword"]],
   "q014": [["path traversal"]],
-  "q015": [["max_resident_memory_percent"], ["quota"]]
+  "q015": [["max_resident_memory_percent"], ["quota"]],
+  "q017": [["1.20.0"]],
+  "q018": [["3.4.0"]],
+  "q019": [["1.20.0"]]
 }
 
