@@ -44,13 +44,24 @@ def fetch_releases(repo: str) -> list[dict]:
     ]
 
 
+def merge(existing: list[dict], fetched: list[dict]) -> tuple[list[dict], int]:
+    known_tags = {r["tag"] for r in existing}
+    new = [r for r in fetched if r["tag"] not in known_tags]
+    merged = sorted(existing + new, key=lambda r: r["published_at"] or "", reverse=True)
+    return merged, len(new)
+
+
 def main() -> None:
     RAW_DIR.mkdir(parents=True, exist_ok=True)
+    total_new = 0
     for repo in REPOS:
-        releases = fetch_releases(repo)
         out_file = RAW_DIR / f"{repo.replace('/', '__')}.json"
-        out_file.write_text(json.dumps(releases, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"{repo}: {len(releases)} releases -> {out_file}")
+        existing = json.loads(out_file.read_text(encoding="utf-8")) if out_file.exists() else []
+        merged, n_new = merge(existing, fetch_releases(repo))
+        out_file.write_text(json.dumps(merged, ensure_ascii=False, indent=2), encoding="utf-8")
+        total_new += n_new
+        print(f"{repo}: {n_new} nouvelle(s) release(s), {len(merged)} au total")
+    print(f"Total : {total_new} nouvelle(s) release(s)")
 
 
 if __name__ == "__main__":
