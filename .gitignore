@@ -7,3 +7,4 @@ data/processed/
 .pytest_cache/
 data/qdrant_db/
 .cache/
+.dagster/
