@@ -1,0 +1,17 @@
+{
+  "q001": [["turbo8"], ["turbo16"]],
+  "q002": [["audit.output"], ["file"]],
+  "q003": [["typer"]],
+  "q004": [["floor"], ["6.25", "6,25"]],
+  "q005": [["1.13.29"]],
+  "q007": [["code"]],
+  "q008": [["substring"], ["full-scan", "full scan"]],
+  "q009": [["4 MiB", "4MiB"], ["transfer_raw_points"]],
+  "q010": [["sensor", "capteur"], ["schedule", "planification"]],
+  "q011": [["1.19.0"], ["1.20.0"]],
+  "q012": [["cold"], ["cached"], ["pinned"]],
+  "q013": [["prefix"], ["mot-clé", "mots-clés", "keyword"]],
+  "q014": [["path traversal"]],
+  "q015": [["max_resident_memory_percent"], ["quota"]]
+}
+

@@ -21,3 +21,27 @@ La métrique vérifie que la bonne release est retrouvée, pas le bon chunk.
 
 - Jeu de questions petit, centré sur deux dépôts : un point d'écart correspond à une seule question.
 - Les questions sans réponse dans le corpus (q006, q016) ne sont pas encore évaluées.
+## Génération (qwen2.5:7b via Ollama, top-5 chunks, température 0)
+
+| Métrique | Score |
+|---|---|
+| Contenu correct | 8/14 |
+| Citation correcte | 10/14 |
+| Refus corrects | 2/2 |
+
+Échecs : q002, q005, q009, q013, q014, q015 (causes à préciser par le diagnostic).
+Attention : l'évaluation par mots-clés est approximative.
+## Génération (qwen2.5:7b via Ollama, top-5 chunks, température 0)
+
+| Métrique | Score |
+|---|---|
+| Contenu correct | 10/14 (8/14 avant correction de deux mots-clés trop stricts : q002, q013) |
+| Citation correcte | 10/14 |
+| Refus corrects | 2/2 |
+
+| Échec | Cause |
+|---|---|
+| q005 | Retrieval : l'information « dernière version » n'est dans aucun chunk (outil nécessaire) |
+| q009 | Génération : réponse incomplète alors que l'information était présente |
+| q014 | Refus à tort malgré l'information dans les chunks |
+| q015 | Retrieval : chunk Deprecations de la v1.19.0 non retrouvé |
