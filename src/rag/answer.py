@@ -1,13 +1,14 @@
 import sys
 
 import requests
+from src.rag.retrieval import K, retrieve
 from fastembed import TextEmbedding
 from qdrant_client import QdrantClient
 
 EMBED_MODEL = "intfloat/multilingual-e5-large"
 LLM_MODEL = "qwen2.5:7b"
 OLLAMA_URL = "http://localhost:11434/api/chat"
-K = 5
+
 
 SYSTEM_PROMPT = (
     "Tu es un assistant de veille technique. Réponds en français, uniquement à partir des "
@@ -18,10 +19,6 @@ SYSTEM_PROMPT = (
 )
 
 
-def retrieve(question: str, embedder, client) -> list[dict]:
-    vector = list(embedder.embed([f"query: {question}"]))[0].tolist()
-    points = client.query_points("releases", query=vector, limit=K).points
-    return [p.payload for p in points]
 
 
 def generate(question: str, chunks: list[dict]) -> str:

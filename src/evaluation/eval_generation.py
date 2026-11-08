@@ -28,10 +28,12 @@ for q in questions:
         content_ok = (not refused) and all(any(a.lower() in low for a in g) for g in groups)
         cited = {int(n) for n in re.findall(r"\[(\d+)\]", answer)}
         cited_urls = {chunks[n - 1]["url"] for n in cited if 1 <= n <= len(chunks)}
-        cite_ok = q["source_url"] in cited_urls
+        expected = {q["source_url"], *q.get("extra_source_urls", [])}
+        cite_ok = expected <= cited_urls
 
     rows.append({"id": q["id"], "type": q["type"], "content_ok": content_ok,
-                 "cite_ok": cite_ok, "answer": answer})
+                 "cite_ok": cite_ok, "answer": answer,
+                 "cited_urls": sorted(cited_urls) if q["type"] != "sans_reponse" else []})
     cite = "-" if cite_ok is None else ("OK" if cite_ok else "KO")
     print(f"{q['id']} | contenu {'OK' if content_ok else 'KO'} | citation {cite} | {q['question'][:50]}")
 

@@ -45,3 +45,29 @@ Attention : l'évaluation par mots-clés est approximative.
 | q009 | Génération : réponse incomplète alors que l'information était présente |
 | q014 | Refus à tort malgré l'information dans les chunks |
 | q015 | Retrieval : chunk Deprecations de la v1.19.0 non retrouvé |
+## Effet du filtre repo/tag (14 questions, une exécution, température 0)
+
+| Mesure | Sans filtre | Avec filtre |
+|---|---|---|
+| Release retrouvée @1 | 12/14 | 13/14 |
+| Mots-clés de la réponse dans le top 5 | 12/14 | 12/14 |
+| Génération : contenu correct | 10/14 | 11/14 |
+| Génération : citation correcte | 10/14 | 12/14 |
+
+Corrigée par le filtre : q014. Non corrigées : q005 (nécessite un outil), q009 (échec du modèle),
+q015 (chunk Deprecations non retrouvé, cause en cours d'analyse).
+Limite : la plupart des questions citent une version, ce qui avantage le filtre.
+## Effet du filtre repo/tag et de K (14 questions, une exécution, température 0)
+
+| Configuration | Mots-clés dans les chunks | Contenu correct | Citation correcte |
+|---|---|---|---|
+| Sans filtre, K = 5 | 12/14 | 10/14 | 10/14 |
+| Filtre, K = 5 | 12/14 | 11/14 | 12/14 |
+| Filtre, K adaptatif (5 sans filtre, 8 avec filtre) | 13/14 | 12/14 | 12/14 |
+
+Corrigées : q014 (filtre), q015 (K adaptatif). Régression : q011 (citation) avec K = 8.
+Non corrigées : q005 (nécessite un outil), q009 (réponse incomplète du modèle).
+Limites : K = 8 choisi après analyse d'un échec du jeu d'évaluation ; la plupart des questions
+citent une version, ce qui avantage le filtre ; une seule exécution.
+q011 (question multi-releases) : contenu correct, mais citation incomplète (le fait de la v1.19.0 n'est pas
+sourcé). Critère de citation étendu aux deux releases attendues.
