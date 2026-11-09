@@ -20,7 +20,7 @@ La métrique vérifie que la bonne release est retrouvée, pas le bon chunk.
 ## Limites
 
 - Jeu de questions petit, centré sur deux dépôts : un point d'écart correspond à une seule question.
-- Les questions sans réponse dans le corpus (q006, q016) ne sont pas encore évaluées.
+## Historique des mesures (du plus ancien au plus récent)
 ## Génération (qwen2.5:7b via Ollama, top-5 chunks, température 0)
 
 | Métrique | Score |
@@ -69,6 +69,7 @@ Corrigées : q014 (filtre), q015 (K adaptatif). Régression : q011 (citation) av
 Non corrigées : q005 (nécessite un outil), q009 (réponse incomplète du modèle).
 Limites : K = 8 choisi après analyse d'un échec du jeu d'évaluation ; la plupart des questions
 citent une version, ce qui avantage le filtre ; une seule exécution.
+### Note sur q011.
 q011 (question multi-releases) : contenu correct, mais citation incomplète (le fait de la v1.19.0 n'est pas
 sourcé). Critère de citation étendu aux deux releases attendues.
 ## Génération : comparaison des configurations (qwen2.5:7b via Ollama, température 0, une exécution)
